@@ -57,12 +57,13 @@ Esta aplicación es para mejorar conocimientos en la construcción de una PWA.
 - 
 
 ---
-## Técnologias
+## Tecnologías
 
 - Modelado: UML
 - Database : MongoDB
 - Backend : JS/Ts using NodeJs
 - Frontend : Js/HTML5/CSS3 using React, Bootstrap
+- Autenticación: JWT/Passport
 - Despliegue: Oracle cloud
 
 
