@@ -40,19 +40,19 @@ Esta aplicación es para mejorar conocimientos en la construcción de una PWA.
 - [ ] Creaciónd de calse notificación
 - [ ] Creación de entidad notificación
 - [x] Crear tarea
-- [] Leer tarea
+- [x] Leer tarea
 - [x] Editar tarea
 - [x] Eliminar tarea
 - [x] Crear categoría
-- [ ] Leer Categoría
+- [x] Leer Categoría
 - [x] Editar Categoría
 - [x] Eliminar Categoría
-- [x] Crear notificación
-- [x] Leer notificación
-- [x] Editar notificación
-- [x] Eliminar notificación
+- [ ] Crear notificación
+- [ ] Leer notificación
+- [ ] Editar notificación
+- [ ] Eliminar notificación
 - [x] Crear evento
-- [] Leer evento
+- [x] Leer evento
 - [x] Editar evento
 - [x] Eliminar evento
 
