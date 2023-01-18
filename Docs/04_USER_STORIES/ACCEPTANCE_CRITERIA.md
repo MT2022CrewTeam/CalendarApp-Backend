@@ -75,7 +75,8 @@
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-14||
+|US-14|1. Frontend must show the details of a task or appointment when user select it|
+
 
 
 
