@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "c2f7f8c2549734cc",
+        "id": "18f4de964a2296e7",
         "type": "tabs",
         "children": [
           {
-            "id": "90711ed872b711fc",
+            "id": "49dbd7b56519a6a6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Actividades/1_actividad_comunicacion.md",
-                "mode": "preview",
+                "file": "Docs/01_WHAT_IS_IDEAL_PROCESS.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Actividades/1_actividad_comunicacion.md",
+                "file": "Docs/01_WHAT_IS_IDEAL_PROCESS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Actividades/1_actividad_comunicacion.md",
+                "file": "Docs/01_WHAT_IS_IDEAL_PROCESS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Actividades/1_actividad_comunicacion.md"
+                "file": "Docs/01_WHAT_IS_IDEAL_PROCESS.md"
               }
             }
           }
@@ -147,12 +147,17 @@
       "command-palette:Abrir paleta de comandos": false
     }
   },
-  "active": "90711ed872b711fc",
+  "active": "49dbd7b56519a6a6",
   "lastOpenFiles": [
+    "Docs/04_NEW_IDEAS/New requirements.md",
+    "Docs/01_WHAT_IS_IDEAL_PROCESS.md",
+    "Docs/03_DIAGRAMS/USE_CASE_DIAGRAM.drawio.png",
+    "Docs/01_Actividades/1_actividad_comunicacion.md",
+    "Docs/03_DIAGRAMS/USE_CASES_DIAGRAM.png",
+    "Docs/04_USER_STORIES/USER_STORIES.md",
     "Documentacion/Identificacion.md",
     "Documentacion/Definition.md",
     "Documentacion/Explore.md",
-    "Actividades/1_actividad_comunicacion.md",
-    "README.md"
+    "Actividades/1_actividad_comunicacion.md"
   ]
 }
