@@ -5,9 +5,7 @@
 |-|3. Backend must verify if email and username are not registered in database| 
 |-|4. Once a user submits the required form, backend must sent a verification code and a route to confirm his/her email|
 |-|5. Frontend must display a terms of use and privacy page and send the filled form just when user accepts the TOU conditions|
-
 ---
-
 |User story|Acceptance criteria|
 |----------|-------------------|
 |US-02|1. Backend must verifiy if username exists in database|
@@ -24,60 +22,77 @@
 |-|5. Frontend must display a notification messange that points out a reminder was successfully created|
 |-|6. Frontend must display a list with all reminders created|
 ---
-|User story|Acceptance criteria|
-|----------|-------------------|
-|US-04|Same criteria as US-03|
----
-|User story|Acceptance criteria|
-|----------|-------------------|
-|US-05|1. Frontend must pass all US-03 criteria excepts the first criterion|
 
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-06|1. Frontend must inquire and validate the following inputs: a. date, b. time|
+|US-04| 1. Frontend must pass all US-03 criteria excepts the first criterion|
+
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-05|1. Frontend must inquire and validate the following inputs: a. date, b. time|
 |-|2. In case user has create 10 reminders and want to add one more, frontend must display a message pointing out that user has reached the maximum number of reminders for that task/appointment|
 |-| Frontend must display a list of created reminders for the task/appointment|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-7|1. Same criteria as US-06|
+|US-06|1. Same criteria as US-06|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-8|1. User can select one or multiple tasks/appointments from their respectives lists|
+|US-07|1. User can select one or multiple tasks/appointments from their respectives lists|
 |-|2. Frontend must display a confirmation message and delete the task/appointment once user has confirmed its deletion|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-9|1. User can select one or multiple reminders from their respectives lists|
+|US-08|1. User can select one or multiple reminders from their respectives lists|
 |-|2. Frontend must display a confirmation message and delete the task/appointment once user has confirmed its deletion|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-10|1. Frontend must display a list of tags(CATEGORIES) applied to a task or appointment when viewing their details|
+|US-09|1. Frontend must display a list of tags(CATEGORIES) applied to a task or appointment when viewing their details|
 |-|2. User can view the list of available categories|
 |-|3. User can create a new category to tag. This criterion is only fullfilled when US-11 acceptance criteria have been passed |
 |-|4. User can select a different color for each categories. This color must be used when displaying catgory lists or tasks tagged with a specific category |
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-11|1. There must be a specific panel to display the list of available categories and the option to edit one category|
+|US-10|1. There must be a specific panel to display the list of available categories and the option to edit one category|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-12|1. User can change name and color of the category. Frontend must display different color options |
+|US-11|1. User can change name and color of the category. Frontend must display different color options |
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-13|1. Frontend must display a confirmation message and delete the category after user accepted|
+|US-12|1. Frontend must display a confirmation message and delete the category after user accepted|
 |-|2. Backend must remove the deleted category and remove the reference to it from tagged tasks and appointments|
 ---
 |User story|Acceptance criteria|
 |----------|-------------------|
-|US-14|1. Frontend must show the details of a task or appointment when user select it|
-
-
+|US-13|1. Frontend must show the details of a task or appointment when user select it|
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-14|1. Frontend must show the details of a tasK when user selects a specific range of date. If user just selects one day, this one should have passed as start and end dates. If users chooses two days, first date picked must be taken as start date and second one is the end date.|
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-15|1. User must have an option to filter his/her task by a specific group of categories and frontEnd must show only the tasks tagged with those.|
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-16|1. User can select one day in the calendar widget and the list of tasks displayed ust change to show only those that are scheduled by that date.|
+|-|Also this user story must accomplish the acceptance criteria of US-14|
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-17|1. |
+---
+|User story|Acceptance criteria|
+|----------|-------------------|
+|US-18|1.|
 
 
 
