@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "lib": ["ES2022"],
+      "module": "CommonJS",
+      "target": "ES2022",
+      "esModuleInterop": true,
+      "allowUnusedLabels": false,
+      "allowUnreachableCode": false,
+      "preserveConstEnums": true,
+      "sourceMap": true,
+      "outDir": "./build"
+
+    },
+    "include": ["api_server/**/*", "./"],
+    "exclude": ["node_modules", "**/*.spec.ts", ".obsidian", "Docs"]
+}
