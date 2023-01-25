@@ -38,17 +38,3 @@ export class MongooseConnection {
     })
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-export {mongoose}
