@@ -1,4 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+import { ICategory, IReminder, ITask } from "./task.interface";
+
+
+export type taskDocument = ITask & Document; 
+export type categoryDocument = ICategory & Document; 
+export type reminderDocument = IReminder & Document; 
 
 export enum taskStatus {
     completed,

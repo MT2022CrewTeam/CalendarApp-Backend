@@ -8,11 +8,12 @@ enum Role {
 
 
 export interface IUser {
-    fullname: String,
-    username: String,
-    email: String,
-    hasEmailConfirmed: Boolean,
-    password: String,
+    _id?: string,
+    fullname: string,
+    username: string,
+    email: string,
+    hasEmailConfirmed: boolean,
+    password: string,
     role: Role,
     tasks: ITask[],
     createdCategories: ICategory[]    

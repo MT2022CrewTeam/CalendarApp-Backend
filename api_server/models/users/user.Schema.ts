@@ -1,9 +1,26 @@
-import mongoose, { Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
+import { ICategory, ITask } from "../tasks/task.interface";
 import { categorySchema, taskSchema } from "../tasks/task.Schema";
+import { IUser } from "./user.interface";
+
+
+export type UserDocument =  User;
 
 export enum Role {
     user,
     admin
+}
+
+export class User implements IUser{
+    _id?: string;
+    fullname: string;
+    username: string;
+    email: string;
+    hasEmailConfirmed: boolean;
+    password: string;
+    role: Role;
+    tasks: ITask[];
+    createdCategories: ICategory[]   
 }
 
 export const userSchema = new Schema ({

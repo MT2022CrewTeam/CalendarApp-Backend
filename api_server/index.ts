@@ -5,7 +5,8 @@ import { MongooseConnection  } from './database';
 import { UserRepository } from './repositories/users.repository';
 import { Role } from './models/users/user.Schema';
 import { taskStatus } from './models/tasks/task.Schema'
-import { ICategory, ITask } from './models/tasks/task.interface';
+import { ICategory, IReminder, ITask } from './models/tasks/task.interface';
+import { UpdateUserDto } from './models/users/updateUserDto.class';
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
 const connectionOptions = {
     dbName: databaseName
@@ -23,18 +24,13 @@ const userRepository = new UserRepository(mongoConnection); //testing
 
 
 app.get('/', async (req: Request, res: Response) => {
-    const task: ITask = {
-        title: 'MyTAsk',
-        startDate: new Date(Date.now()),
-        endDate: new Date(Date.now()),
-        status: taskStatus.in_progress,
-        progress: 0,
-        categories: [],
-        reminders: []
+    const updateUserDto: UpdateUserDto = {
+        email: 'esteesunnuevo@email.com'
     }
     const users = await userRepository
-     .createTask("63d086982f98d66c6d5d0aa0", task);
+     .updateUser("63d086982f98d66c6d5d0aa0", updateUserDto);
     res.send(users);
+
 });
 
 app.listen(appPort, () => {
