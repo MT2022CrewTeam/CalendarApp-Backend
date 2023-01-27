@@ -7,6 +7,7 @@ import { Role } from './models/users/user.Schema';
 import { taskStatus } from './models/tasks/task.Schema'
 import { ICategory, IReminder, ITask } from './models/tasks/task.interface';
 import { UpdateUserDto } from './models/users/updateUserDto.class';
+import { UsersController } from './controllers/user/users.controller';
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
 const connectionOptions = {
     dbName: databaseName
@@ -19,7 +20,7 @@ app.use(express.json());
 const mongoConnection: MongooseConnection = 
   new MongooseConnection(databaseUrl, connectionOptions);
 const userRepository = new UserRepository(mongoConnection); //testing 
-
+const usersController = new UsersController(userRepository);
 
 
 
@@ -32,6 +33,10 @@ app.get('/', async (req: Request, res: Response) => {
     res.send(users);
 
 });
+
+app.post('/users', async (req: Request, res: Response) =>{
+     usersController.createUser(req, res);
+}) 
 
 app.listen(appPort, () => {
     console.log(`Express with Typescript! http://localhost:${appPort}`); 

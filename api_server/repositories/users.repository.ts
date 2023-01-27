@@ -3,7 +3,7 @@ import { MongooseConnection } from "../database";
 import { ICategory, IReminder, ITask } from "../models/tasks/task.interface";
 import { IUser } from "../models/users/user.interface";
 import mongoose, { Model } from "mongoose";
-import { Role, UserDocument, userSchema } from "../models/users/user.Schema";
+import { Role, User, UserDocument, userSchema } from "../models/users/user.Schema";
 import { CreateUserDto } from "../models/users/createUserDto.class";
 import { UpdateUserDto } from "../models/users/updateUserDto.class";
 
@@ -88,12 +88,16 @@ export class UserRepository implements IUserRepository {
   }
 
   public async createUser(createUserDto: CreateUserDto): Promise<IUser> {
-    let newUser: IUser;
-    newUser = Object.assign(newUser, createUserDto);
-    newUser.hasEmailConfirmed = false;
-    newUser.role = Role.user;
-    newUser.tasks = [];
-    newUser.createdCategories = [];
+    let newUser: IUser = {
+    fullname: createUserDto.fullname,
+    username: createUserDto.username, /* Object.assign(newUser, createUserDto); */
+    email: createUserDto.email,
+    password: createUserDto.password,
+    hasEmailConfirmed: false,
+    role: Role.user,
+    tasks: [],
+    createdCategories: []
+    }
     const user = new this.userModel(newUser);
     return await user.save();
   }
