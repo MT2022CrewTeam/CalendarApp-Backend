@@ -3,14 +3,19 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
 import { ICategory } from "../../models/tasks/task.interface";
 import { CreateUserDto } from "../../models/users/createUserDto.class";
+import { UpdateUserDto } from "../../models/users/updateUserDto.class";
+import { IUser } from "../../models/users/user.interface";
 import { IUserRepository } from "../../repositories/userRepository.interface";
 import { UserRepository } from "../../repositories/users.repository";
+import { Controller } from "../controller.abstract";
 import { IUsersController } from "./users.controller.interface";
 
 
 
-export class UsersController implements IUsersController{
-    constructor (private readonly usersRepository: UserRepository) {}
+export class UsersController extends Controller implements IUsersController{
+    constructor (private readonly usersRepository: UserRepository) {
+        super();
+    }
 
     public async createUser(
         req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
@@ -43,7 +48,7 @@ export class UsersController implements IUsersController{
                 return this.jsonResponse(res, 404, "Not body passed in request" )
             }
             try {
-                let category: ICategory = {
+                const category: ICategory = {
                     name: req.body.name,
                     color: req.body.color
                 }
@@ -54,18 +59,113 @@ export class UsersController implements IUsersController{
             } catch(err){
                 return this.fail(res, err.toString());
             }
-
+    }
+    
+    public async updateUser(
+      req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
+      res: Response<any, Record<string, any>>): Promise<any> {
+      
+      const authorizedUserFields: string[] = [
+        'fullname', 'tasks', 'createCategories'];
+      return await this.changeUser(req, res, authorizedUserFields); 
     }
 
-    public fail(res: Response<any, Record<string, any>>, error: string | Error) {
-        console.log(error);
+    public async updateUserCrendentials(
+      req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
+      res: Response<any, Record<string, any>>): Promise<any> {
+      
+      const authorizedUserFields: string[] = ['email', 'password'];
+      return await this.changeUser(req, res, authorizedUserFields); 
+    }    
+
+    public async changeUser(
+      req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+      res: Response<any, Record<string, any>>,
+      userFields: string[]): Promise<any> {
+      
+      if(!req.params.id) {
+        this.jsonResponse(res, 404, "Not user id in request");
+      }
+      if(!req.body){
+        this.jsonResponse(res, 404, "Not body passed in request");
+      }
+      try {
+        let sentBody = JSON.parse(req.body);
+        let updateUserDto: UpdateUserDto  = {};
+        userFields.forEach((field) => {
+          updateUserDto[field] = sentBody[field];
+        });
+        updateUserDto = this.removeNullBodyFields(updateUserDto);
+        if (!updateUserDto){
+          this.jsonResponse(res, 404, "passed fields not are allowed");
+        }
+        if (updateUserDto.password || updateUserDto.email) {
+          updateUserDto['hasEmailConfirmed'] = false;
+        }
+        const id: string = req.params.id;
+        ;
+        await this.usersRepository.updateUser(id, updateUserDto)
+        this.jsonResponse(res, 202, "user updated successfully" );
+
+      } catch (err){
+        this.fail(res, err.toString());
+      }
+    }
+
+    private removeNullBodyFields(body: Object): Object {
+      const keys = Object.keys(body);
+      for (let i = 0; i < keys.length; i++) {
+        if (body[keys[i]] === undefined) {
+          delete body[keys[i]];
+        }
+      }
+      return body;
+    }
+
+    public async getUser(
+      req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
+      res: Response<any, Record<string, any>>): Promise<any> {
+      if(!req.params.id) {
+       return this.jsonResponse(res, 404, "Not user id in request");
+      }
+      try {
+        const idUser: string = req.params.id;
+        const user: IUser = await this.usersRepository.findUserById(idUser);
+        
+        if (!user) {
+          return this.jsonResponse(res, 404, "Not found user associated with passed id");
+        }
+
+        delete user.password;
+        res.type('application/json');
+        return res.status(200).json({ user });
+        
+      } catch(err) {
+        return this.fail(res, err.toString());
+      }
+    }
+
+    public async deleteUser(
+      req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
+      res: Response<any, Record<string, any>>): Promise<any> {
+      
+      if(!req.params.id) {
+        return this.jsonResponse(res, 404, "Not user id in request");
+      }      
+      
+      try {
+        const idUser: string = req.params.id;
+        await this.usersRepository.deleteUser(idUser);
         res.type('application/json')
-        return res.status(500).json({message: error.toString()});
-        // The server has encountered a situation it does not know how to handle.
-    }
+        this.jsonResponse(res, 200, 'User was deleted successfully')
 
-    public jsonResponse(res: Response<any, Record<string, any>>, code: number, message: string) {
-        res.type('application/json')
-        return res.status(code).json({ message: message });
+
+      } catch(err){
+        return this.fail(res, err.toString());
+      }
+
     }
+        
 }
+
+

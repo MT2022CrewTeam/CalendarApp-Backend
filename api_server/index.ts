@@ -8,6 +8,7 @@ import { taskStatus } from './models/tasks/task.Schema'
 import { ICategory, IReminder, ITask } from './models/tasks/task.interface';
 import { UpdateUserDto } from './models/users/updateUserDto.class';
 import { UsersController } from './controllers/user/users.controller';
+import { UserRoute } from './routes/users.route';
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
 const connectionOptions = {
     dbName: databaseName
@@ -21,7 +22,7 @@ const mongoConnection: MongooseConnection =
   new MongooseConnection(databaseUrl, connectionOptions);
 const userRepository = new UserRepository(mongoConnection); //testing 
 const usersController = new UsersController(userRepository);
-
+const users = new UserRoute(usersController);
 app.get('/', async (req: Request, res: Response) => {
     const updateUserDto: UpdateUserDto = {
         email: 'esteesunnuevo@email.com'
@@ -36,9 +37,15 @@ app.get('/', async (req: Request, res: Response) => {
 //      usersController.createUser(req, res);
 // }) 
 
-app.post('/categories',async (req: Request, res: Response) => {
-    usersController.createCategory(req, res);
-})
+// app.post('/categories',async (req: Request, res: Response) => {
+//     usersController.createCategory(req, res);
+// })
+
+// app.get('/users/:id', (req: Request, res: Response) => {
+//         usersController.getUser(req, res);
+//     });
+
+app.use('/users', users.router);
 
 app.listen(appPort, () => {
     console.log(`Express with Typescript! http://localhost:${appPort}`); 

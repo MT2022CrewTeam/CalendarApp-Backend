@@ -78,7 +78,7 @@ export class UserRepository implements IUserRepository {
     if (taskIndex === -1) {
       return "Task was not found";
     }
-    user.tasks[taskIndex].reminders.push(newReminder);
+    user.tasks[taskIndex].reminders.push(newReminder); //verify if reminder exists
     return await this.userModel.updateOne({ _id: id }, user);
   }
 
@@ -199,6 +199,8 @@ export class UserRepository implements IUserRepository {
   }
 
   public async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<IUser> {
+    console.log(id);
+    console.log(updateUserDto);
     return await this.userModel.findOneAndUpdate({_id: id }, updateUserDto);
     
   }
