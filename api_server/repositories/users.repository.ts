@@ -6,6 +6,7 @@ import mongoose, { Model } from "mongoose";
 import { Role, User, UserDocument, userSchema } from "../models/users/user.Schema";
 import { CreateUserDto } from "../models/users/createUserDto.class";
 import { UpdateUserDto } from "../models/users/updateUserDto.class";
+import { isEqual } from "lodash"
 
 export class UserRepository implements IUserRepository {
   private readonly userModel;
@@ -20,12 +21,14 @@ export class UserRepository implements IUserRepository {
 
   private findElementInArray(elementToFind: any, array: any[]): boolean {
     const elementExists = array.findIndex(
-      (element) => element === elementToFind
+      (element) => {
+        delete element._id;
+        isEqual(element, elementToFind)}
     );
     if (elementExists === -1) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   private findTask(
@@ -51,14 +54,17 @@ export class UserRepository implements IUserRepository {
     newCategory: ICategory
   ): Promise<any> {
     const user: IUser = await this.findUserById(id); /* await this.userModel.findOne({"_id": id}); */
-    const categoryExists = this.findElementInArray(
-      newCategory,
-      user.createdCategories
-    );
-    if (categoryExists) {
-      return "Category already exists";
+    console.log(user);
+    const categoryExists = user.createdCategories.
+    findIndex((element) => element.color === newCategory.color 
+    && element.name === newCategory.name);
+
+    if (categoryExists !== -1) {
+      console.log("here");
+      throw new Error ("Category already exists");
     }
     user.createdCategories.push(newCategory);
+    console.log(user);
     return await this.userModel.updateOne({ _id: id }, user);
   }
 

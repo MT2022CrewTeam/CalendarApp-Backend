@@ -22,8 +22,6 @@ const mongoConnection: MongooseConnection =
 const userRepository = new UserRepository(mongoConnection); //testing 
 const usersController = new UsersController(userRepository);
 
-
-
 app.get('/', async (req: Request, res: Response) => {
     const updateUserDto: UpdateUserDto = {
         email: 'esteesunnuevo@email.com'
@@ -34,9 +32,13 @@ app.get('/', async (req: Request, res: Response) => {
 
 });
 
-app.post('/users', async (req: Request, res: Response) =>{
-     usersController.createUser(req, res);
-}) 
+// app.post('/users', async (req: Request, res: Response) =>{
+//      usersController.createUser(req, res);
+// }) 
+
+app.post('/categories',async (req: Request, res: Response) => {
+    usersController.createCategory(req, res);
+})
 
 app.listen(appPort, () => {
     console.log(`Express with Typescript! http://localhost:${appPort}`); 
