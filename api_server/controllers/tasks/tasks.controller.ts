@@ -14,6 +14,25 @@ export class TasksController extends Controller implements ITaskController {
   constructor(private readonly usersRepository: UserRepository) {
     super();
   }
+  private getUserAndTaskIds(req: Request) {
+    const idUser: string = req.params.id
+      ? req.params.id
+      : req.query.id
+      ? req.query.id
+      : req.body.idUser;
+    const idTask: string = req.params.idt
+      ? req.params.idt
+      : req.query.idt
+      ? req.query.idt
+      : req.body.idTask;
+    return [idUser, idTask];
+  }
+
+  private validateIfTaskIdPassed(req, res): void {
+    if (!req.params.idt && !req.body.idTask && !req.query.idt) {
+      throw new Error("task ID not was passed in request");
+    }
+  }  
   public async createTask(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -42,6 +61,43 @@ export class TasksController extends Controller implements ITaskController {
       return this.fail(res, err.toString());
     }
   }
+
+  public async patchTask(
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+  ) {
+    this.validateEmptyBody(req, res);
+    this.validateIfUserIdPassed(req, res);
+    if (!req.params.idt && !req.body.idTask && !req.query.idt) {
+      throw new Error("task ID not was passed in request");
+    }
+    try {
+      const taskFields = [
+        "title",
+        "startDate",
+        "endDate",
+        "status",
+        "progress",
+        "categories",
+        "reminders",
+      ];
+
+      let updateTaskDto: UpdateTaskDto = {};
+
+      // const bodyFields = JSON.parse(req.body);
+
+      for (let field in taskFields) {
+        updateTaskDto[taskFields[field]] = req.body[taskFields[field]];
+      }
+      updateTaskDto = this.removeNullBodyFields(updateTaskDto);
+      const [idUser, idTask] = this.getUserAndTaskIds(req);
+      await this.usersRepository.patchTask(idUser, idTask, updateTaskDto);
+      return this.jsonResponse(res, 201, "task was updated successfully");
+    } catch (err) {
+      return this.fail(res, err.toString());
+    }
+  }
+
 
   public async updateTask(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
@@ -72,12 +128,12 @@ export class TasksController extends Controller implements ITaskController {
       }
       updateTaskDto = this.removeNullBodyFields(updateTaskDto);
       const [idUser, idTask] = this.getUserAndTaskIds(req);
-      await this.usersRepository.updateTask(idUser, idTask, updateTaskDto);
+      await this.usersRepository.patchTask(idUser, idTask, updateTaskDto);
       return this.jsonResponse(res, 201, "task was updated successfully");
     } catch (err) {
       return this.fail(res, err.toString());
     }
-  }
+  }  
 
   public async getTaskById(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
@@ -109,6 +165,21 @@ export class TasksController extends Controller implements ITaskController {
     return this.jsonReturn(res, 200, tasks);
   }
 
+  // public async getTaskByDate(req: Request, res: Response) {
+  //   this.validateIfUserIdPassed(req, res);
+  //   try {
+  //     const [idUser, idTask] = this.getUserAndTaskIds(req);
+  //     const rangeDate = {
+  //       startDate: req.body.startDate,
+  //       endDate: req.body.endDate
+  //     }
+  //     const tasks = await this.usersRepository.getTasksByDate(rangeDate);
+
+  //   } catch (err) {
+  //     return this.fail(res, err.toString());
+  //   }
+  // }
+
   public async deleteTask(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
@@ -124,23 +195,27 @@ export class TasksController extends Controller implements ITaskController {
     }
   }
 
-  private getUserAndTaskIds(req: Request) {
-    const idUser: string = req.params.id
-      ? req.params.id
-      : req.query.id
-      ? req.query.id
-      : req.body.idUser;
-    const idTask: string = req.params.idt
-      ? req.params.idt
-      : req.query.idt
-      ? req.query.idt
-      : req.body.idTask;
-    return [idUser, idTask];
-  }
-
-  private validateIfTaskIdPassed(req, res): void {
-    if (!req.params.idt && !req.body.idTask && !req.query.idt) {
-      throw new Error("task ID not was passed in request");
+  public async getTasksByDate(    
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>
+    ) {
+      this.validateIfUserIdPassed(req, res);
+      if (!req.body.startDate){
+        throw new Error ("Not date passed in request");
+      }
+      try {
+        const endDate = req.body.endDate ? req.body.endDate: req.body.starDate;
+        const startDate = req.body.startDate;
+        const [idUser, idTask] = this.getUserAndTaskIds(req);
+        const tasks = await this.usersRepository.getTasksByDate(
+          {
+            idUser, startDate, endDate
+          });
+        return this.jsonReturn(res, 200, tasks);
+        
+      } catch(err) {
+        this.fail(res, err.toString());
+      }
     }
-  }
+
 }

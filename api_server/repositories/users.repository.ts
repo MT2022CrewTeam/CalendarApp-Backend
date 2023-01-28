@@ -13,7 +13,6 @@ import { UpdateTaskDto } from "../models/tasks/updateTaskDto";
 
 export class UserRepository implements IUserRepository {
   private readonly userModel;
-
   constructor(private connection: MongooseConnection) {
     this.userModel = this.connection.mongoose.model(
       "user",
@@ -229,11 +228,9 @@ export class UserRepository implements IUserRepository {
     if (!user) {
       throw new Error ('user not found');
     }
-
     return user;
   }
 
- 
 
   public async findUserById(id: string): Promise<IUser> {
     return await this.userModel.findById(id);
@@ -246,7 +243,7 @@ export class UserRepository implements IUserRepository {
     
   }
   
-  public async updateTask(id: string, idTask: string, updateTaskDto: UpdateTaskDto): Promise<void> {
+  public async patchTask(id: string, idTask: string, updateTaskDto: UpdateTaskDto): Promise<void> {
     this.findUserById(id)
     .then((user) => {
       return user;
@@ -255,12 +252,45 @@ export class UserRepository implements IUserRepository {
       const taskIndex: number = this.findTaskById(user, idTask);
       user.tasks[taskIndex] = Object.assign(user.tasks[taskIndex], updateTaskDto);
       return this.updateUser(id, {tasks:user.tasks});
-    })
-    
+    }); 
+  }  
 
-    
+  public async putTask(id: string, idTask: string, updateTaskDto: ITask): Promise<void> {
+    this.findUserById(id)
+    .then((user) => {
+      return user;
+    })
+    .then((user) =>{
+      const taskIndex: number = this.findTaskById(user, idTask);
+      user.tasks[taskIndex] = updateTaskDto;
+      return this.updateUser(id, {tasks:user.tasks});
+    }); 
+  }
+
+  public async getTasksByDate (parameters: {[k: string]: string}) {
+    let tasksScheduledInDateRange: ITask[] = [];
+    const { startDate, endDate } = parameters;
+    const start: number = new Date(startDate).getTime();
+    const end: number = new Date(endDate).getTime();
+
+    return this.findUserById(parameters['idUser'])
+    .then((user) => {
+      return user;
+    })
+    .then((user) =>  {
+      user.tasks.forEach((task) => {
+        let taskStartTime = task.startDate.getTime();
+        let taskEndTime = task.endDate.getTime();
+        if(taskStartTime >= start &&  taskEndTime <= end){
+          tasksScheduledInDateRange.push(task);
+        }
+      });
+      return tasksScheduledInDateRange;
+    });
     
   }  
+
+
 
   // public validateRegisteredUser(username: string, email: string): Promise<IUser> {
 
@@ -269,4 +299,6 @@ export class UserRepository implements IUserRepository {
   // public validateUserCredentials(username: string, password: string): Promise<IUser> {
 
   // }
+
+  
 }
