@@ -7,6 +7,9 @@ import { Role, User, UserDocument, userSchema } from "../models/users/user.Schem
 import { CreateUserDto } from "../models/users/createUserDto.class";
 import { UpdateUserDto } from "../models/users/updateUserDto.class";
 import { isEqual } from "lodash"
+import { CreateTaskDto } from "../models/tasks/createTaskDto";
+import { taskStatus } from "../models/tasks/task.Schema";
+import { UpdateTaskDto } from "../models/tasks/updateTaskDto";
 
 export class UserRepository implements IUserRepository {
   private readonly userModel;
@@ -31,8 +34,16 @@ export class UserRepository implements IUserRepository {
     return true;
   }
 
+  private findTaskById(user: IUser, idTask: string): number {
+    const index = user.tasks.findIndex(task => String(task._id) === idTask);
+    if (index === -1) {
+      throw new Error('Task was not found');
+    }
+    return index
+  }  
+
   private findTask(
-    task: ITask,
+    task: CreateTaskDto,
     userTasks: ITask[],
     taskComparisonCriteria = ["title", "startDate", "endDate"]
   ): boolean {
@@ -40,7 +51,15 @@ export class UserRepository implements IUserRepository {
     userTasks.forEach(function (userTask) {
       conditionsFullfilled = 0;
       taskComparisonCriteria.forEach(function (field) {
-        if (task[field] === userTask[field]) conditionsFullfilled += 1;
+        let isEqual: boolean = false;
+        if (task[field] instanceof Date){
+          isEqual = task[field].getTime() === userTask[field].getTime()
+        } else {
+          isEqual = task[field] === userTask[field]
+        }
+        if (isEqual) {
+          conditionsFullfilled += 1;
+        };
       });
     });
     if (conditionsFullfilled === taskComparisonCriteria.length) {
@@ -75,19 +94,28 @@ export class UserRepository implements IUserRepository {
   ) {
     const user: IUser = await this.findUserById(id);
     const taskIndex: number = this.findTaskById(user, idTask);
-    if (taskIndex === -1) {
-      return "Task was not found";
-    }
+
     user.tasks[taskIndex].reminders.push(newReminder); //verify if reminder exists
     return await this.userModel.updateOne({ _id: id }, user);
   }
 
-  public async createTask(id: string, newTask: ITask) {
+  public async createTask(id: string, taskDto: CreateTaskDto) {
     const user = await this.findUserById(id);
-    const taskExists = this.findTask(newTask, user.tasks);
+    
+    const taskExists = this.findTask(taskDto, user.tasks);
     if (taskExists) {
-      return "Task already exists";
+      throw new Error ("Task already exists");
     }
+    const newTask: ITask = {
+      title: taskDto.title,
+      startDate: taskDto.startDate,
+      endDate: taskDto.endDate,
+      status: taskStatus.in_progress,
+      progress: 0,
+      categories: taskDto.categories ? taskDto.categories : [],
+      reminders: taskDto.reminders ? taskDto.reminders : []
+    } 
+
     user.tasks.push(newTask); //preguntar si se permiten dos tareas con mismo nombre y tiempo
     return await this.userModel.updateOne({ _id: id }, user);
 
@@ -143,13 +171,22 @@ export class UserRepository implements IUserRepository {
   }
 
   public async deleteTask(id: string, idTask: string): Promise<any> {
-    const user: IUser = await this.findUserById(id);
-    user.tasks.forEach(function (task, index) {
-      if (task._id === idTask) {
-        user.tasks.splice(index);
-      }
-    });
-    return await this.userModel.updateOne({ _id: id }, user);
+    /* const user: IUser = await */ 
+    this.findUserById(id)
+    .then(
+      (user) => {
+        const taskIndex: number = this.findTaskById(user, idTask);
+        
+        user.tasks.splice(taskIndex, taskIndex+1);
+        return user;
+        }
+      ).then(
+        (user) => {
+          console.log(user);
+          return this.userModel.updateOne({ _id: id }, user)
+        }
+      );
+
   }
 
   public async deleteUser(id: string): Promise<any> {
@@ -177,6 +214,12 @@ export class UserRepository implements IUserRepository {
     return tasksWithReminder
   }
 
+  public async getTaskById(id: string, idTask: string): Promise<ITask | any> {
+    const user = await this.findUserById(id);
+    const taskIndex = this.findTaskById(user, idTask);
+    return user.tasks[taskIndex];
+  }  
+
   // public findTaskByDate(id: string, startDate: string, endDate: string): Promise<ITask> {
 
   // }
@@ -190,9 +233,7 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  public findTaskById(user: IUser, idTask: string): number {
-    return user.tasks.findIndex(task => task._id === idTask);
-  }
+ 
 
   public async findUserById(id: string): Promise<IUser> {
     return await this.userModel.findById(id);
@@ -204,6 +245,22 @@ export class UserRepository implements IUserRepository {
     return await this.userModel.findOneAndUpdate({_id: id }, updateUserDto);
     
   }
+  
+  public async updateTask(id: string, idTask: string, updateTaskDto: UpdateTaskDto): Promise<void> {
+    this.findUserById(id)
+    .then((user) => {
+      return user;
+    })
+    .then((user) =>{
+      const taskIndex: number = this.findTaskById(user, idTask);
+      user.tasks[taskIndex] = Object.assign(user.tasks[taskIndex], updateTaskDto);
+      return this.updateUser(id, {tasks:user.tasks});
+    })
+    
+
+    
+    
+  }  
 
   // public validateRegisteredUser(username: string, email: string): Promise<IUser> {
 

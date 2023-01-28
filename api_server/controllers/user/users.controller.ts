@@ -60,7 +60,7 @@ export class UsersController extends Controller implements IUsersController{
                 return this.fail(res, err.toString());
             }
     }
-    
+
     public async updateUser(
       req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
       res: Response<any, Record<string, any>>): Promise<any> {
@@ -110,16 +110,6 @@ export class UsersController extends Controller implements IUsersController{
       } catch (err){
         this.fail(res, err.toString());
       }
-    }
-
-    private removeNullBodyFields(body: Object): Object {
-      const keys = Object.keys(body);
-      for (let i = 0; i < keys.length; i++) {
-        if (body[keys[i]] === undefined) {
-          delete body[keys[i]];
-        }
-      }
-      return body;
     }
 
     public async getUser(

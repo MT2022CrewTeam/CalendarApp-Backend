@@ -18,7 +18,7 @@ export interface IUserRepository {
     // Hacer busqueda de tareas y categorias por ID
     
     // findTaskByDate(id: string, startDate: string, endDate: string): Promise<ITask>;
-    findTaskById(user: IUser, idTask: string): number
+    // findTaskById(user: IUser, idTask: string): number
     findUserByCredentials(username: string , password: string): Promise<IUser>;
     findUserById(id: string): Promise<IUser>;    
     getAllTasks(id: string): Promise<ITask[]>;

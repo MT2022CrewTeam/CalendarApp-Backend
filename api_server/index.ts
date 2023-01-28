@@ -9,6 +9,8 @@ import { ICategory, IReminder, ITask } from './models/tasks/task.interface';
 import { UpdateUserDto } from './models/users/updateUserDto.class';
 import { UsersController } from './controllers/user/users.controller';
 import { UserRoute } from './routes/users.route';
+import { TaskRoute } from './routes/tasks.route';
+import { TasksController } from './controllers/tasks/tasks.controller';
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
 const connectionOptions = {
     dbName: databaseName
@@ -22,30 +24,11 @@ const mongoConnection: MongooseConnection =
   new MongooseConnection(databaseUrl, connectionOptions);
 const userRepository = new UserRepository(mongoConnection); //testing 
 const usersController = new UsersController(userRepository);
+const tasksController = new TasksController(userRepository);
 const users = new UserRoute(usersController);
-app.get('/', async (req: Request, res: Response) => {
-    const updateUserDto: UpdateUserDto = {
-        email: 'esteesunnuevo@email.com'
-    }
-    const users = await userRepository
-     .updateUser("63d086982f98d66c6d5d0aa0", updateUserDto);
-    res.send(users);
-
-});
-
-// app.post('/users', async (req: Request, res: Response) =>{
-//      usersController.createUser(req, res);
-// }) 
-
-// app.post('/categories',async (req: Request, res: Response) => {
-//     usersController.createCategory(req, res);
-// })
-
-// app.get('/users/:id', (req: Request, res: Response) => {
-//         usersController.getUser(req, res);
-//     });
-
+const tasks = new TaskRoute(tasksController);
 app.use('/users', users.router);
+app.use('/users', tasks.router);
 
 app.listen(appPort, () => {
     console.log(`Express with Typescript! http://localhost:${appPort}`); 
