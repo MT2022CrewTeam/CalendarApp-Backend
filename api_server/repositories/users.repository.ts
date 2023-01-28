@@ -141,7 +141,7 @@ export class UserRepository implements IUserRepository {
     user.createdCategories.forEach(function (category, index) {
       if (category._id === idCategory) {
         removedCategory = user.createdCategories[index];
-        user.createdCategories.splice(index);
+        user.createdCategories.splice(index, 1);
       }
     });
 
@@ -151,7 +151,7 @@ export class UserRepository implements IUserRepository {
 
     user.tasks.forEach(function (task, index) {
       if (task.categories.includes(removedCategory)) {
-        task.categories.splice(index);
+        task.categories.splice(index, 1);
       }
     });
     return await this.userModel.updateOne({ _id: id }, user);
@@ -162,7 +162,7 @@ export class UserRepository implements IUserRepository {
     const taskIndex: number = this.findTaskById(user, idTask);
     user.tasks[taskIndex].reminders.forEach(function(reminder,index, reminders){
       if (reminder._id === idReminder) {
-        reminders.splice(index);
+        reminders.splice(index, 1);
       }
     })
 
@@ -176,7 +176,7 @@ export class UserRepository implements IUserRepository {
       (user) => {
         const taskIndex: number = this.findTaskById(user, idTask);
         
-        user.tasks.splice(taskIndex, taskIndex+1);
+        user.tasks.splice(taskIndex, 1);
         return user;
         }
       ).then(
