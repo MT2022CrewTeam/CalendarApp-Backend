@@ -17,7 +17,6 @@ const connectionOptions = {
 }
 
 const app: Application = express();
-const router: Router = express.Router();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()); 
 const mongoConnection: MongooseConnection = 

@@ -24,7 +24,12 @@ class ConfigService {
     }
   }
 
-  public getMongodbConnectionOptions(): void {}
+  public getJWTConfig(){
+    return {
+      jwtSecret: this.getValue('JWT_PASSWORD')
+    }
+  }
+  
 }
 
 const configService = new ConfigService(process.env).ensureValues([
@@ -32,6 +37,7 @@ const configService = new ConfigService(process.env).ensureValues([
   'MONGODB_DATABASE',
   'MONGODB_USER',
   'MONGODB_PASSWORD',
+  'JWT_PASSWORD'
 ]);
 
 export {configService};

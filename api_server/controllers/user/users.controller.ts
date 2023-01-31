@@ -44,15 +44,13 @@ export class UsersController extends Controller implements IUsersController{
         res: Response<any, Record<string, any>>)
         : Promise<any> {
 
-            if((!req.body.idUser)) {
-                return this.jsonResponse(res, 404, "Not body passed in request" )
-            }
+            this.validateIfUserIdPassed(req, res);
             try {
                 const category: ICategory = {
                     name: req.body.name,
                     color: req.body.color
                 }
-                const idUser: string = req.body.idUser; 
+                const idUser: string = req.params.id; 
                 await this.usersRepository.createCategory( idUser, category);
                 return this.jsonResponse(res, 201, 'Category created successfully')
 
@@ -83,12 +81,7 @@ export class UsersController extends Controller implements IUsersController{
       res: Response<any, Record<string, any>>,
       userFields: string[]): Promise<any> {
       
-      if(!req.params.id) {
-        this.jsonResponse(res, 404, "Not user id in request");
-      }
-      if(!req.body){
-        this.jsonResponse(res, 404, "Not body passed in request");
-      }
+      this.validateIfUserIdPassed(req, res);
       try {
         let sentBody = JSON.parse(req.body);
         let updateUserDto: UpdateUserDto  = {};
