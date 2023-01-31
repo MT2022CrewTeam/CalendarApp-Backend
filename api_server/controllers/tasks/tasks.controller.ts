@@ -37,9 +37,10 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateEmptyBody(req, res);
-    this.validateIfUserIdPassed(req, res);
+
     try {
+      this.validateEmptyBody(req, res);
+      this.validateIfUserIdPassed(req, res);
       const taskFields: CreateTaskDto = {
         title: req.body.title,
         startDate: new Date(req.body.startDate),
@@ -66,12 +67,12 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateEmptyBody(req, res);
-    this.validateIfUserIdPassed(req, res);
-    if (!req.params.idt && !req.body.idTask && !req.query.idt) {
-      throw new Error("task ID not was passed in request");
-    }
     try {
+      this.validateEmptyBody(req, res);
+      this.validateIfUserIdPassed(req, res);
+      if (!req.params.idt && !req.body.idTask && !req.query.idt) {
+        throw new Error("task ID not was passed in request");
+      }      
       const taskFields = [
         "title",
         "startDate",
@@ -103,12 +104,12 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateEmptyBody(req, res);
-    this.validateIfUserIdPassed(req, res);
-    if (!req.params.idt && !req.body.idTask && !req.query.idt) {
-      throw new Error("task ID not was passed in request");
-    }
     try {
+      this.validateEmptyBody(req, res);
+      this.validateIfUserIdPassed(req, res);
+      if (!req.params.idt && !req.body.idTask && !req.query.idt) {
+        throw new Error("task ID not was passed in request");
+      }      
       const taskFields = [
         "title",
         "startDate",
@@ -139,9 +140,8 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateIfUserIdPassed(req, res);
-
     try {
+      this.validateIfUserIdPassed(req, res);
       const [idUser, idTask] = this.getUserAndTaskIds(req);
       console.log(`idUse:${idUser} `); //- idTask:${idTask}
       const task: ITask = await this.usersRepository.getTaskById(
@@ -158,11 +158,15 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateIfUserIdPassed(req, res);
-    const tasks: ITask[] = await this.usersRepository.getAllTasks(
+    try {
+      this.validateIfUserIdPassed(req, res);
+      const tasks: ITask[] = await this.usersRepository.getAllTasks(
       req.params.id
     );
-    return this.jsonReturn(res, 200, tasks);
+      return this.jsonReturn(res, 200, tasks);
+    } catch (err) {
+      return this.fail(res, err.toString());
+    }
   }
 
   // public async getTaskByDate(req: Request, res: Response) {
@@ -184,9 +188,10 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
   ) {
-    this.validateIfUserIdPassed(req, res);
-    this.validateIfTaskIdPassed(req, res);
+
     try {
+      this.validateIfUserIdPassed(req, res);
+      this.validateIfTaskIdPassed(req, res);
       const [idUser, idTask] = this.getUserAndTaskIds(req);
       await this.usersRepository.deleteTask(idUser, idTask);
       return this.jsonResponse(res, 200, "task was deleted successfully");
@@ -199,11 +204,11 @@ export class TasksController extends Controller implements ITaskController {
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
     ) {
-      this.validateIfUserIdPassed(req, res);
-      if (!req.body.startDate){
-        throw new Error ("Not date passed in request");
-      }
       try {
+        this.validateIfUserIdPassed(req, res);
+        if (!req.body.startDate){
+          throw new Error ("Not date passed in request");
+        }        
         const endDate = req.body.endDate ? req.body.endDate: req.body.starDate;
         const startDate = req.body.startDate;
         const [idUser, idTask] = this.getUserAndTaskIds(req);

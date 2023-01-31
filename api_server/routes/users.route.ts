@@ -1,4 +1,5 @@
-import express, { Request, Response, Router } from "express";
+import express, { NextFunction, Request, Response, Router } from "express";
+import { request } from "http";
 import { Authentication } from "../controllers/middleware/authentication.middleware";
 import { UsersController } from "../controllers/user/users.controller";
 
@@ -13,8 +14,9 @@ export class UserRoute {
 
         this.router.get(
             '/:id', 
-            this.authenticator.ensureAuntheticated,
-            async (req: Request, res: Response) =>{
+            async (req: Request, res: Response, next: NextFunction) => {
+                this.authenticator.ensureAuntheticated(req, res, next)},
+            async (req: Request, res: Response) => {
                 try {
                     await this.usersController.getUser(req, res);
                 } catch(err) {
@@ -24,7 +26,9 @@ export class UserRoute {
 
         this.router.patch(
             '/:id', 
-            this.authenticator.ensureAuntheticated,
+            async (req: Request, res: Response, next: NextFunction) => {
+                this.authenticator.ensureAuntheticated(req, res, next)
+            },
             async (req: Request, res: Response) =>{
                 try {
                     await this.usersController.updateUser(req, res);
@@ -35,7 +39,9 @@ export class UserRoute {
 
         this.router.delete(
             '/:id', 
-            this.authenticator.ensureAuntheticated,
+            async (req: Request, res: Response, next: NextFunction) => {
+                this.authenticator.ensureAuntheticated(req, res, next)
+            },
             async (req: Request, res: Response) =>{
                 try {
                     await this.usersController.deleteUser(req, res);
@@ -43,17 +49,6 @@ export class UserRoute {
                     return this.failedReques(res, err);
                 }
         })
-
-        this.router.post(
-            '/:id/categories', 
-            this.authenticator.ensureAuntheticated,
-            async(req: Request, res: Response) => {
-                try {
-                    this.usersController.createCategory(req, res);
-                } catch(err) {
-                    return this.failedReques(res, err);
-                }
-        });
     }
 
     private failedReques (res: Response, err: Error) {

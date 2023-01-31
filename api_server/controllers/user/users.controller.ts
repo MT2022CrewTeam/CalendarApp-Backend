@@ -39,25 +39,26 @@ export class UsersController extends Controller implements IUsersController{
     //         }   
     // }
 
-    public async createCategory(
-        req: Request, 
-        res: Response<any, Record<string, any>>)
-        : Promise<any> {
+    // public async createCategory(
+    //     req: Request, 
+    //     res: Response<any, Record<string, any>>)
+    //     : Promise<any> {
 
-            this.validateIfUserIdPassed(req, res);
-            try {
-                const category: ICategory = {
-                    name: req.body.name,
-                    color: req.body.color
-                }
-                const idUser: string = req.params.id; 
-                await this.usersRepository.createCategory( idUser, category);
-                return this.jsonResponse(res, 201, 'Category created successfully')
+            
+    //         try {
+    //             this.validateIfUserIdPassed(req, res);
+    //             const category: ICategory = {
+    //                 name: req.body.name,
+    //                 color: req.body.color
+    //             }
+    //             const idUser: string = req.params.id; 
+    //             await this.usersRepository.createCategory( idUser, category);
+    //             return this.jsonResponse(res, 201, 'Category created successfully')
 
-            } catch(err){
-                return this.fail(res, err.toString());
-            }
-    }
+    //         } catch(err){
+    //             return this.fail(res, err.toString());
+    //         }
+    // }
 
     public async updateUser(
       req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
@@ -81,12 +82,12 @@ export class UsersController extends Controller implements IUsersController{
       res: Response<any, Record<string, any>>,
       userFields: string[]): Promise<any> {
       
-      this.validateIfUserIdPassed(req, res);
+      
       try {
-        let sentBody = JSON.parse(req.body);
+        this.validateIfUserIdPassed(req, res);
         let updateUserDto: UpdateUserDto  = {};
         userFields.forEach((field) => {
-          updateUserDto[field] = sentBody[field];
+          updateUserDto[field] = req.body[field];
         });
         updateUserDto = this.removeNullBodyFields(updateUserDto);
         if (!updateUserDto){

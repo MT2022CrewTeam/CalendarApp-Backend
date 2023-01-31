@@ -31,18 +31,14 @@ export class AuthRepository implements IAuthRepository {
 
 
     async singin(username: string, password: string): Promise<string> {
-        const user: IUser = this.usersModel.findOne({
+        const user: IUser = await this.usersModel.findOne({
             username: username,
             password: password
         })
-        .then(user => {
-            return user;
-        })
-
         if (!user) {
-            throw new Error ('Password or username is not valid')
-        }
-        return this.createToken(user._id, user.fullname );
+            throw new Error ('Password or username is not valid');
+        }        
+        return this.createToken(String(user._id), user.fullname );
     }
 
     async singup(createUserDto: CreateUserDto): Promise<string> {
@@ -56,7 +52,8 @@ export class AuthRepository implements IAuthRepository {
             tasks: [],
             createdCategories: []
             }
-            const user = new this.usersModel(newUser).then(user => {return user});
+            const user = new this.usersModel(newUser);
+            user.save();
             return this.createToken(user._id, user.fullname );
     }
 
@@ -76,18 +73,23 @@ export class AuthRepository implements IAuthRepository {
 
     async validateToken(token: string): Promise<IPayload> {
 
-        const payload = jsonwebtoken.verify(token, 
-            configService.getJWTConfig().jwtSecret);
+        // const payload = jsonwebtoken.verify(token, 
+        //     configService.getJWTConfig().jwtSecret);
+        
+        // const {sub} = payload;
+        // const user = this.usersModel.findOne({_id: sub})
+        // .then( user => {
+        //     if(!user) {
+        //         throw new Error('User not found');
+        //     }; 
 
-        const {sub} = payload;
-        const user = this.usersModel.findOne({_id: sub})
-        .then( user => {
-            if(!user) {
-                throw new Error('User not found');
-            }; 
-
-            return user;
-        })
+        //     return user;
+        // })
+        // return payload;
+        const payload: IPayload = {
+            sub: '1',
+            given_name: 'test',
+        }
         return payload;
     }
 

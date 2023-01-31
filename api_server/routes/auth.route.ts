@@ -10,7 +10,7 @@ export class AuthRoute {
             await this.authController.signup(req, res);
         })
         this.router.post('/signin', async (req: Request, res: Response) => {
-            await this.authController.signup(req, res);
+            await this.authController.signin(req, res);
         })
     }
 

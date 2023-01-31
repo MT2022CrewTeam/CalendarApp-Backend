@@ -20,7 +20,7 @@ export abstract class Controller {
     }
 
     public validateEmptyBody(req: Request, res: Response): void {
-        if (!req.body) {
+        if (Object.keys(req.body).length === 0) {
             // return this.jsonResponse(res, 404, "Not body passed in request" )
             throw new Error("Not body passed in request");
         }
