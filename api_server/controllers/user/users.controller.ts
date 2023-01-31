@@ -17,27 +17,27 @@ export class UsersController extends Controller implements IUsersController{
         super();
     }
 
-    public async createUser(
-        req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
-        res: Response<any, Record<string, any>>)
-        : Promise<any> {
-            if (!req.body) {
-                return this.jsonResponse(res, 404, "Not body passed in request" )
-            }
-            try {
-                let userDto: CreateUserDto = {
-                    username: req.body.username,
-                    password: req.body.password,
-                    fullname: req.body.fullname,
-                    email: req.body.email
-                };
-                await this.usersRepository.createUser(userDto);
-                return this.jsonResponse(res, 201, 'user was created successfully')/* res.status(200).json('user was created successfully'); */
+    // public async createUser(
+    //     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
+    //     res: Response<any, Record<string, any>>)
+    //     : Promise<any> {
+    //         if (!req.body) {
+    //             return this.jsonResponse(res, 404, "Not body passed in request" )
+    //         }
+    //         try {
+    //             let userDto: CreateUserDto = {
+    //                 username: req.body.username,
+    //                 password: req.body.password,
+    //                 fullname: req.body.fullname,
+    //                 email: req.body.email
+    //             };
+    //             await this.usersRepository.createUser(userDto);
+    //             return this.jsonResponse(res, 201, 'user was created successfully')/* res.status(200).json('user was created successfully'); */
 
-            } catch(err) {
-                return this.fail(res, err.toString());
-            }   
-    }
+    //         } catch(err) {
+    //             return this.fail(res, err.toString());
+    //         }   
+    // }
 
     public async createCategory(
         req: Request, 

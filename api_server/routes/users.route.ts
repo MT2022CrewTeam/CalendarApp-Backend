@@ -15,32 +15,50 @@ export class UserRoute {
             '/:id', 
             this.authenticator.ensureAuntheticated,
             async (req: Request, res: Response) =>{
-                await this.usersController.getUser(req, res);
+                try {
+                    await this.usersController.getUser(req, res);
+                } catch(err) {
+                    return this.failedReques(res, err);
+                }
         });
 
         this.router.patch(
             '/:id', 
             this.authenticator.ensureAuntheticated,
             async (req: Request, res: Response) =>{
-                await this.usersController.updateUser(req, res);
+                try {
+                    await this.usersController.updateUser(req, res);
+                } catch(err) {
+                    return this.failedReques(res, err);
+                }
         })
 
         this.router.delete(
             '/:id', 
             this.authenticator.ensureAuntheticated,
             async (req: Request, res: Response) =>{
-                await this.usersController.deleteUser(req, res);
+                try {
+                    await this.usersController.deleteUser(req, res);
+                } catch(err) {
+                    return this.failedReques(res, err);
+                }
         })
 
         this.router.post(
             '/:id/categories', 
             this.authenticator.ensureAuntheticated,
             async(req: Request, res: Response) => {
-                this.usersController.createCategory(req, res);
+                try {
+                    this.usersController.createCategory(req, res);
+                } catch(err) {
+                    return this.failedReques(res, err);
+                }
         });
     }
 
-    
+    private failedReques (res: Response, err: Error) {
+        return res.status(401).send({message: err.toString()});
+    }    
     
     
 }
