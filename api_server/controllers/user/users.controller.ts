@@ -110,7 +110,7 @@ export class UsersController extends Controller implements IUsersController{
       req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, 
       res: Response<any, Record<string, any>>): Promise<any> {
       if(!req.params.id) {
-       return this.jsonResponse(res, 404, "Not user id in request");
+       return this.jsonResponse(res, 400, "Not user id in request");
       }
       try {
         const idUser: string = req.params.id;

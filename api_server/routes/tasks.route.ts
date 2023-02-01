@@ -51,7 +51,7 @@ export class TaskRoute {
             await this.tasksController.getAllTask(req, res);
     });     
 
-    this.router.get(
+    this.router.post(
         "/:id/tasks-by-date", 
         async (req: Request, res: Response, next: NextFunction) => {
             this.authenticator.ensureAuntheticated(req, res, next)
