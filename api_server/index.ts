@@ -25,7 +25,7 @@ app.use(express.json());
 const mongoConnection: MongooseConnection = 
   new MongooseConnection(databaseUrl, connectionOptions);
 
-const userRepository = new UserRepository(mongoConnection); //testing 
+const userRepository = new UserRepository(mongoConnection); 
 const authRepository = new AuthRepository(mongoConnection);
 const authenticator = new Authentication(authRepository);
 const usersController = new UsersController(userRepository);

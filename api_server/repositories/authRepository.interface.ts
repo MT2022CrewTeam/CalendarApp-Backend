@@ -11,6 +11,6 @@ export interface IAuthRepository {
     createToken(id: string, fullname: string): string;
     validateToken(token: string): Promise<IPayload>;
     validateCredentials(username: string , email: string): Promise<boolean>;
-    singup(createUserDto: CreateUserDto): Promise<string>;
-    singin(username: string , password: string): Promise<string>;
+    signup(createUserDto: CreateUserDto): Promise<string>;
+    signin(username: string , password: string): Promise<string>;
 }

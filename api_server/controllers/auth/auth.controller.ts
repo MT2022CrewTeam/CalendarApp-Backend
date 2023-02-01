@@ -18,6 +18,12 @@ export class AuthController extends Controller {
         try {
             this.validateEmptyBody(req, res);
             this.validateUserDto(req.body);
+            const areCredentialRegistered = 
+                await this.authRepo.validateCredentials(req.body.username, req.body.password);
+            if (areCredentialRegistered){
+                throw new Error('Username or email were registered or are already in use.');
+            }
+
             let userDto: CreateUserDto = {
                 username: req.body.username,
                 password: req.body.password,
@@ -25,7 +31,7 @@ export class AuthController extends Controller {
                 email: req.body.email
             };
 
-            const token = await this.authRepo.singup(userDto);
+            const token = await this.authRepo.signup(userDto);
             return res.status(201).send({"token": token})
         } catch(err) {
             return this.fail(res, err.toString());
@@ -37,7 +43,7 @@ export class AuthController extends Controller {
         try{
             this.validateEmptyBody(req, res);
             const {username, password} = req.body;
-            const token = await this.authRepo.singin(username, password);
+            const token = await this.authRepo.signin(username, password);
             console.log(token);
             return res.status(201).send({"token": token});
 
