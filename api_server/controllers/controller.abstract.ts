@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 
 export abstract class Controller {
-    public fail(res: Response<any, Record<string, any>>, error: string | Error) {
+    public  fail(res: Response<any, Record<string, any>>, error: string | Error) {
         console.log(error);
         res.type('application/json')
         return res.status(500).json({message: error.toString()});

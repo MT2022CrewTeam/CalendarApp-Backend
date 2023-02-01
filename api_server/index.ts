@@ -10,7 +10,10 @@ import { Authentication } from './controllers/middleware/authentication.middlewa
 import { AuthRepository } from './repositories/authRepository';
 import { AuthController } from './controllers/auth/auth.controller';
 import { AuthRoute } from './routes/auth.route';
+import swaggerUi  from 'swagger-ui-express'
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
+
+
 const connectionOptions = {
     dbName: databaseName
 }
@@ -37,6 +40,9 @@ app.use('/auth', auth.router);
 app.use('/users', users.router);
 app.use('/users', tasks.router);
 
+const jsondoc = require('../swagger.json');
+
+app.use('/api-docs', swaggerUi.serve ,swaggerUi.setup(jsondoc));
 app.listen(appPort, () => {
     console.log(`Express with Typescript! http://localhost:${appPort}`); 
 });

@@ -20,7 +20,7 @@ export class UserRoute {
                 try {
                     await this.usersController.getUser(req, res);
                 } catch(err) {
-                    return this.failedReques(res, err);
+                    return this.failedRequest(res, err);
                 }
         });
 
@@ -33,7 +33,7 @@ export class UserRoute {
                 try {
                     await this.usersController.updateUser(req, res);
                 } catch(err) {
-                    return this.failedReques(res, err);
+                    return this.failedRequest(res, err);
                 }
         })
 
@@ -46,12 +46,12 @@ export class UserRoute {
                 try {
                     await this.usersController.deleteUser(req, res);
                 } catch(err) {
-                    return this.failedReques(res, err);
+                    return this.failedRequest(res, err);
                 }
         })
     }
 
-    private failedReques (res: Response, err: Error) {
+    private failedRequest (res: Response, err: Error) {
         return res.status(401).send({message: err.toString()});
     }    
     
