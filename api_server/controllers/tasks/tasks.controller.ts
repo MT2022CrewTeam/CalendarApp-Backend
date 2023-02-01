@@ -10,7 +10,24 @@ import { UserRepository } from "../../repositories/users.repository";
 import { Controller } from "../controller.abstract";
 import { ITaskController } from "./tasks.controller.interface";
 
+export interface IUpdateParams {
+  idUser: string,
+  idTask: string,
+  taskFields: ITask
+}
+
+
 export class TasksController extends Controller implements ITaskController {
+  private taskFields = [
+    "title",
+    "startDate",
+    "endDate",
+    "status",
+    "progress",
+    "categories",
+    "reminders",
+  ];
+  
   constructor(private readonly usersRepository: UserRepository) {
     super();
   }
@@ -62,42 +79,30 @@ export class TasksController extends Controller implements ITaskController {
       return this.fail(res, err.toString());
     }
   }
+  public buildUpdateParameters(    
+    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
+    res: Response<any, Record<string, any>>): IUpdateParams {
+      
+        this.validateEmptyBody(req, res);
+        this.validateIfUserIdPassed(req, res);
+        if (!req.params.idt && !req.body.idTask && !req.query.idt) {
+          throw new Error("task ID not was passed in request");
+        }      
+        let updateTaskDto: ITask;
+        for (let field in this.taskFields) {
+          updateTaskDto[this.taskFields[field]] = req.body[this.taskFields[field]];
+        }
+        
+        const [idUser, idTask] = this.getUserAndTaskIds(req);
+        return {idUser: idUser, 
+                idTask: idTask, 
+                taskFields: updateTaskDto}
 
+    }
   public async patchTask(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
     res: Response<any, Record<string, any>>
-  ) {
-    try {
-      this.validateEmptyBody(req, res);
-      this.validateIfUserIdPassed(req, res);
-      if (!req.params.idt && !req.body.idTask && !req.query.idt) {
-        throw new Error("task ID not was passed in request");
-      }      
-      const taskFields = [
-        "title",
-        "startDate",
-        "endDate",
-        "status",
-        "progress",
-        "categories",
-        "reminders",
-      ];
-
-      let updateTaskDto: UpdateTaskDto = {};
-
-      // const bodyFields = JSON.parse(req.body);
-
-      for (let field in taskFields) {
-        updateTaskDto[taskFields[field]] = req.body[taskFields[field]];
-      }
-      updateTaskDto = this.removeNullBodyFields(updateTaskDto);
-      const [idUser, idTask] = this.getUserAndTaskIds(req);
-      await this.usersRepository.patchTask(idUser, idTask, updateTaskDto);
-      return this.jsonResponse(res, 201, "task was updated successfully");
-    } catch (err) {
-      return this.fail(res, err.toString());
-    }
-  }
+  ) { }
 
 
   public async updateTask(
@@ -105,36 +110,14 @@ export class TasksController extends Controller implements ITaskController {
     res: Response<any, Record<string, any>>
   ) {
     try {
-      this.validateEmptyBody(req, res);
-      this.validateIfUserIdPassed(req, res);
-      if (!req.params.idt && !req.body.idTask && !req.query.idt) {
-        throw new Error("task ID not was passed in request");
-      }      
-      const taskFields = [
-        "title",
-        "startDate",
-        "endDate",
-        "status",
-        "progress",
-        "categories",
-        "reminders",
-      ];
+      const {idUser, idTask, taskFields} = this.buildUpdateParameters(req, res);
+      await this.usersRepository.putTask(idUser, idTask, taskFields);
 
-      let updateTaskDto: UpdateTaskDto = {};
-
-      // const bodyFields = JSON.parse(req.body);
-
-      for (let field in taskFields) {
-        updateTaskDto[taskFields[field]] = req.body[taskFields[field]];
-      }
-      updateTaskDto = this.removeNullBodyFields(updateTaskDto);
-      const [idUser, idTask] = this.getUserAndTaskIds(req);
-      await this.usersRepository.patchTask(idUser, idTask, updateTaskDto);
       return this.jsonResponse(res, 201, "task was updated successfully");
     } catch (err) {
       return this.fail(res, err.toString());
-    }
-  }  
+    }    
+    }  
 
   public async getTaskById(
     req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,

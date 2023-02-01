@@ -73,24 +73,21 @@ export class AuthRepository implements IAuthRepository {
 
     async validateToken(token: string): Promise<IPayload> {
 
-        // const payload = jsonwebtoken.verify(token, 
-        //     configService.getJWTConfig().jwtSecret);
+        const payload = jsonwebtoken.verify(token, 
+            configService.getJWTConfig().jwtSecret);
         
-        // const {sub} = payload;
-        // const user = this.usersModel.findOne({_id: sub})
-        // .then( user => {
-        //     if(!user) {
-        //         throw new Error('User not found');
-        //     }; 
-
-        //     return user;
-        // })
-        // return payload;
-        const payload: IPayload = {
-            sub: '1',
-            given_name: 'test',
-        }
+        const {sub} = payload;
+        const user = await this.usersModel.findOne({_id: sub})
+        if(!user) {
+            throw new Error('User not found');
+        }; 
+        
         return payload;
+        // const payload: IPayload = {
+        //     sub: '1',
+        //     given_name: 'test',
+        // }
+        // return payload;
     }
 
 

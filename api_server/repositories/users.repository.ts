@@ -243,28 +243,18 @@ export class UserRepository implements IUserRepository {
     
   }
   
-  public async patchTask(id: string, idTask: string, updateTaskDto: UpdateTaskDto): Promise<void> {
-    this.findUserById(id)
-    .then((user) => {
-      return user;
-    })
-    .then((user) =>{
-      const taskIndex: number = this.findTaskById(user, idTask);
-      user.tasks[taskIndex] = Object.assign(user.tasks[taskIndex], updateTaskDto);
-      return this.updateUser(id, {tasks:user.tasks});
-    }); 
+  public async patchTask(id: string, idTask: string, updateTaskDto: UpdateTaskDto): Promise<void> {    
+    const user = await this.findUserById(id)
+    const taskIndex: number = this.findTaskById(user, idTask);
+    user.tasks[taskIndex] = Object.assign(user.tasks[taskIndex], updateTaskDto);
+    this.updateUser(id, {tasks:user.tasks});
   }  
 
   public async putTask(id: string, idTask: string, updateTaskDto: ITask): Promise<void> {
-    this.findUserById(id)
-    .then((user) => {
-      return user;
-    })
-    .then((user) =>{
-      const taskIndex: number = this.findTaskById(user, idTask);
-      user.tasks[taskIndex] = updateTaskDto;
-      return this.updateUser(id, {tasks:user.tasks});
-    }); 
+    const user = await this.findUserById(id)
+    const taskIndex: number = this.findTaskById(user, idTask);
+    user.tasks[taskIndex] = updateTaskDto;
+    this.updateUser(id, {tasks:user.tasks});    
   }
 
   public async getTasksByDate (parameters: {[k: string]: string}) {

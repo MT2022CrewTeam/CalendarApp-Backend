@@ -38,6 +38,7 @@ export class AuthController extends Controller {
             this.validateEmptyBody(req, res);
             const {username, password} = req.body;
             const token = await this.authRepo.singin(username, password);
+            console.log(token);
             return res.status(201).send({"token": token});
 
         }catch(err) {

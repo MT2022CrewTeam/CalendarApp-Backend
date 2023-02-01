@@ -16,8 +16,9 @@ export class Authentication {
             
             const token: string = req.headers.authorization.split(" ")[1];
             const payload: IPayload = await this.authRepository.validateToken(token);
-            console.log(payload);
-            req['id'] = payload.sub;
+            if (req.params.id !== payload.sub) {
+                return response.status(404).send({message: "Id passed not correspond with bearer token"});
+            }
             next();
         } catch(err: any) {
             return response.status(401).send({message: err.toString()});

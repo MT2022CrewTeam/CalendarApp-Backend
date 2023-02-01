@@ -16,14 +16,14 @@ export class TaskRoute {
             await this.tasksController.createTask(req, res);
     });
 
-    this.router.patch(
-        "/:id/tasks/:idt", 
-        async (req: Request, res: Response, next: NextFunction) => {
-            this.authenticator.ensureAuntheticated(req, res, next)
-        },
-        async (req: Request, res: Response) => {
-            await this.tasksController.patchTask(req, res);
-    });
+    // this.router.patch(
+    //     "/:id/tasks/:idt", 
+    //     async (req: Request, res: Response, next: NextFunction) => {
+    //         this.authenticator.ensureAuntheticated(req, res, next)
+    //     },
+    //     async (req: Request, res: Response) => {
+    //         await this.tasksController.patchTask(req, res);
+    // });
 
     this.router.put(
         "/:id/tasks/:idt", 
