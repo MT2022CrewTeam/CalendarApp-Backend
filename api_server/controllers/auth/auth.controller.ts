@@ -13,6 +13,17 @@ export class AuthController extends Controller {
         super();
     }
 
+    public async logout(req: Request, res: Response) {
+        try{
+            if(!req.params.id){
+                throw new Error('User id was not found');
+            }
+            await this.authRepo.logout(req.params.id);
+            return this.jsonResponse(res, 201, 'User session finished correctly');
+        } catch(err){
+            return this.fail(res, err.toString());
+        }
+    }
     public async signup (req: Request, res: Response): Promise<any> {
         
         try {
@@ -20,7 +31,9 @@ export class AuthController extends Controller {
             this.validateUserDto(req.body);
             const areCredentialRegistered = 
                 await this.authRepo.validateCredentials(req.body.username, req.body.password);
+
             if (areCredentialRegistered){
+                console.log(areCredentialRegistered);
                 throw new Error('Username or email were registered or are already in use.');
             }
 

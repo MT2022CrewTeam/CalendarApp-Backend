@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthRepository } from "../../repositories/authRepository";
 import { IPayload } from "../../repositories/authRepository.interface";
-import jsonwebtoken from "jsonwebtoken";
+
+
 
 
 export class Authentication {
@@ -13,7 +14,7 @@ export class Authentication {
             if(!req.headers.authorization){
                 throw new Error ('Not auth header was found in request');
             }
-            
+            await this.authRepository.ensureUserIsLogged(req.params.id);
             const token: string = req.headers.authorization.split(" ")[1];
             const payload: IPayload = await this.authRepository.validateToken(token);
             if (req.params.id !== payload.sub) {
@@ -22,7 +23,7 @@ export class Authentication {
             next();
         } catch(err: any) {
             return response.status(401).send({message: err.toString()});
-        }
-        
+        }   
     }
+
 }

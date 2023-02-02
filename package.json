@@ -32,6 +32,7 @@
     "moment": "^2.29.4",
     "mongoose": "^6.8.4",
     "nodemon": "^2.0.20",
+    "redis": "^4.6.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.0",
     "ts-node": "^10.9.1",

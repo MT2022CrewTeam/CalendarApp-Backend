@@ -1,47 +1,72 @@
-import express, { Application, Router, Request, Response, NextFunction } from 'express';
-import { configService } from './config/config';
-import { MongooseConnection  } from './database';
-import { UserRepository } from './repositories/users.repository';
-import { UsersController } from './controllers/user/users.controller';
-import { UserRoute } from './routes/users.route';
-import { TaskRoute } from './routes/tasks.route';
-import { TasksController } from './controllers/tasks/tasks.controller';
-import { Authentication } from './controllers/middleware/authentication.middleware';
-import { AuthRepository } from './repositories/authRepository';
-import { AuthController } from './controllers/auth/auth.controller';
-import { AuthRoute } from './routes/auth.route';
-import swaggerUi  from 'swagger-ui-express'
-import xssClean from 'xss-clean';
-import hpp from 'hpp';
-const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
-const mongoSanitize = require('express-mongo-sanitize');
-const rateLimit = require('express-rate-limit');
+import express, {
+  Application,
+  Router,
+  Request,
+  Response,
+  NextFunction,
+} from "express";
+import { configService } from "./config/config";
+import { MongooseConnection } from "./database";
+import { UserRepository } from "./repositories/users.repository";
+import { UsersController } from "./controllers/user/users.controller";
+import { UserRoute } from "./routes/users.route";
+import { TaskRoute } from "./routes/tasks.route";
+import { TasksController } from "./controllers/tasks/tasks.controller";
+import { Authentication } from "./controllers/middleware/authentication.middleware";
+import { AuthRepository } from "./repositories/authRepository";
+import { AuthController } from "./controllers/auth/auth.controller";
+import { AuthRoute } from "./routes/auth.route";
+import { createClient, RedisClientType } from "redis";
+import swaggerUi from "swagger-ui-express";
+import xssClean from "xss-clean";
+import hpp from "hpp";
 
-const helmet = require('helmet');
+const { databaseUrl, databaseName, appPort } =
+  configService.getMongodbConnectionConfig();
+const mongoSanitize = require("express-mongo-sanitize");
+const rateLimit = require("express-rate-limit");
+
+const helmet = require("helmet");
 const connectionOptions = {
-    dbName: databaseName
-}
+  dbName: databaseName,
+};
+const { redisUser, redisPassword } = configService.getREDISConfig();
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100,
+});
 
 const app: Application = express();
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,    // 10 minutes
-  max: 100
-})
-
-app.use(express.urlencoded({extended: true}));
-app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(helmet());
 app.use(xssClean());
 app.use(hpp());
 app.use(mongoSanitize());
 app.use(limiter);
 
-const mongoConnection: MongooseConnection = 
-  new MongooseConnection(databaseUrl, connectionOptions);
+const mongoConnection: MongooseConnection = new MongooseConnection(
+  databaseUrl,
+  connectionOptions
+);
+const redisClient: RedisClientType = createClient({
+  username: redisUser,
+  password: redisPassword,
+});
 
+redisClient.connect();
 
-const userRepository = new UserRepository(mongoConnection); 
-const authRepository = new AuthRepository(mongoConnection);
+redisClient.on('connect', () => {
+  console.log('Connected!');
+});
+
+// Log any error that may occur to the console
+redisClient.on("error", (err) => {
+  console.log(`Error:${err}`);
+});
+
+const userRepository = new UserRepository(mongoConnection);
+const authRepository = new AuthRepository(mongoConnection, redisClient);
 const authenticator = new Authentication(authRepository);
 const usersController = new UsersController(userRepository);
 const tasksController = new TasksController(userRepository);
@@ -51,14 +76,14 @@ const auth = new AuthRoute(authController);
 const users = new UserRoute(usersController, authenticator);
 const tasks = new TaskRoute(tasksController, authenticator);
 
-app.use('/auth', auth.router);
-app.use('/users', users.router);
-app.use('/users', tasks.router);
+app.use("/auth", auth.router);
+app.use("/users", users.router);
+app.use("/users", tasks.router);
 
-const jsondoc = require('../swagger.json');
+const jsondoc = require("../swagger.json");
 
-app.use('/api-docs', swaggerUi.serve ,swaggerUi.setup(jsondoc));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(jsondoc));
+
 app.listen(appPort, () => {
-    console.log(`Express with Typescript! http://localhost:${appPort}`); 
+  console.log(`Express with Typescript! http://localhost:${appPort}`);
 });
-

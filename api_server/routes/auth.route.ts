@@ -8,9 +8,12 @@ export class AuthRoute {
     constructor (private readonly authController: AuthController) {
         this.router.post('/signup', async (req: Request, res: Response) => {
             await this.authController.signup(req, res);
-        })
+        });
         this.router.post('/signin', async (req: Request, res: Response) => {
             await this.authController.signin(req, res);
+        });
+        this.router.post('/logout/:id', async (req: Request, res: Response) => {
+            await this.authController.logout(req, res);
         })
     }
 

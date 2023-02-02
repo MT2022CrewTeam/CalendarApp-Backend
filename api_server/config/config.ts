@@ -29,6 +29,13 @@ class ConfigService {
       jwtSecret: this.getValue('JWT_PASSWORD')
     }
   }
+
+  public getREDISConfig(){
+    return {
+      redisUser: this.getValue('REDIS_USER'),
+      redisPassword: this.getValue('REDIS_PASSWORD')
+    }
+  }  
   
 }
 
@@ -37,7 +44,9 @@ const configService = new ConfigService(process.env).ensureValues([
   'MONGODB_DATABASE',
   'MONGODB_USER',
   'MONGODB_PASSWORD',
-  'JWT_PASSWORD'
+  'JWT_PASSWORD',
+  'REDIS_USER',
+  'REDIS_PASSWORD'
 ]);
 
 export {configService};

@@ -7,12 +7,14 @@ import { configService } from "../config/config";
 import { CreateUserDto } from "../models/users/createUserDto.class";
 import { IUser } from "../models/users/user.interface";
 import { compare, genSalt, hash } from 'bcrypt';
+import { RedisClientType } from "redis";
 
 
 export class AuthRepository implements IAuthRepository {
     private readonly usersModel;
     
-    constructor(private readonly connection: MongooseConnection) {
+    constructor(private readonly connection: MongooseConnection,
+                private readonly redisClient: RedisClientType) {
         this.usersModel = this.connection.mongoose.model(
             "user",
             userSchema,
@@ -30,7 +32,9 @@ export class AuthRepository implements IAuthRepository {
         return jsonwebtoken.sign(payload, configService.getJWTConfig().jwtSecret);
     }
 
-
+    async logout(id: string): Promise<any> {
+        this.redisClient.del(id);
+    }
     async signin(username: string, password: string): Promise<string> {
         const user: IUser = await this.usersModel.findOne({
             username: username,
@@ -44,6 +48,8 @@ export class AuthRepository implements IAuthRepository {
         if (!hasPasswordMatch) {
             throw new Error ('Password or username not valid');
         }
+
+        await this.redisClient.set(String(user._id), '100');
 
         return this.createToken(String(user._id), user.fullname );
     }
@@ -62,7 +68,7 @@ export class AuthRepository implements IAuthRepository {
             }
             
             const user = new this.usersModel(newUser);
-            user.save();
+            await user.save();
             return this.createToken(user._id, user.fullname );
     }
 
@@ -72,12 +78,12 @@ export class AuthRepository implements IAuthRepository {
             {email: email}
         ]
         });
-
-        if(!user) {
-            return false;
+        
+        if(user) {
+            return true;
         }
 
-        return true;
+        return false;
         
     }
 
@@ -93,12 +99,15 @@ export class AuthRepository implements IAuthRepository {
         }; 
         
         return payload;
-        // const payload: IPayload = {
-        //     sub: '1',
-        //     given_name: 'test',
-        // }
-        // return payload;
     }
+
+    async ensureUserIsLogged (id: string): Promise<any> {
+        const isLogged = await this.redisClient.get(id);    
+        console.log(isLogged);
+        if (!isLogged) {
+            throw new Error('User must log in first to use this resource');
+        }
+    }    
 
 
 
