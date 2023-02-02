@@ -11,6 +11,6 @@
       "outDir": "./build"
 
     },
-    "include": ["api_server/**/*", "./"],
+    "include": ["api_server/**/*"],
     "exclude": ["node_modules", "**/*.spec.ts", ".obsidian", "Docs"]
 }

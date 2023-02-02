@@ -49,7 +49,7 @@ export class AuthRepository implements IAuthRepository {
     }
 
     async signup(createUserDto: CreateUserDto): Promise<string> {
-        const salt = await genSalt(15);
+        const salt = await genSalt(10);
         let newUser: IUser = {
             fullname: createUserDto.fullname,
             username: createUserDto.username, /* Object.assign(newUser, createUserDto); */
@@ -89,7 +89,7 @@ export class AuthRepository implements IAuthRepository {
         const {sub} = payload;
         const user = await this.usersModel.findOne({_id: sub})
         if(!user) {
-            throw new Error('User not found');
+            throw new Error('Id passed is not associated with given token');
         }; 
         
         return payload;

@@ -11,19 +11,34 @@ import { AuthRepository } from './repositories/authRepository';
 import { AuthController } from './controllers/auth/auth.controller';
 import { AuthRoute } from './routes/auth.route';
 import swaggerUi  from 'swagger-ui-express'
+import xssClean from 'xss-clean';
+import hpp from 'hpp';
 const {databaseUrl, databaseName, appPort} = configService.getMongodbConnectionConfig();
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require('express-rate-limit');
 
-
+const helmet = require('helmet');
 const connectionOptions = {
     dbName: databaseName
 }
 
 const app: Application = express();
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,    // 10 minutes
+  max: 100
+})
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()); 
+app.use(helmet());
+app.use(xssClean());
+app.use(hpp());
+app.use(mongoSanitize());
+app.use(limiter);
 
 const mongoConnection: MongooseConnection = 
   new MongooseConnection(databaseUrl, connectionOptions);
+
 
 const userRepository = new UserRepository(mongoConnection); 
 const authRepository = new AuthRepository(mongoConnection);
