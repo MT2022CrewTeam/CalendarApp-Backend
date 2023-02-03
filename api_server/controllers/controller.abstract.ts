@@ -5,7 +5,7 @@ export abstract class Controller {
     public  fail(res: Response<any, Record<string, any>>, error: string | Error) {
         console.log(error);
         res.type('application/json')
-        return res.status(500).json({message: error.toString()});
+        return res.status(400).json({message: error.toString()});
         // The server has encountered a situation it does not know how to handle.
     }
 
