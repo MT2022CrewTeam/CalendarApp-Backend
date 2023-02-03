@@ -27,7 +27,7 @@ export class AuthRepository implements IAuthRepository {
             sub: id,
             given_name: fullname,
             iat: moment().unix(),
-            exp: moment().add(30, 'minutes').unix()
+            exp: moment().add(2, 'hours').unix()
         }
         return jsonwebtoken.sign(payload, configService.getJWTConfig().jwtSecret);
     }
@@ -50,7 +50,7 @@ export class AuthRepository implements IAuthRepository {
         }
 
         await this.redisClient.set(String(user._id), '100');
-        await this.redisClient.expire(String(user._id), 3600);
+        await this.redisClient.expire(String(user._id), 2 * 3600);  
 
         return this.createToken(String(user._id), user.fullname );
     }
