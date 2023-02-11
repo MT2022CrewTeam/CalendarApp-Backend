@@ -33,7 +33,8 @@ class ConfigService {
   public getREDISConfig(){
     return {
       redisUser: this.getValue('REDIS_USER'),
-      redisPassword: this.getValue('REDIS_PASSWORD')
+      redisPassword: this.getValue('REDIS_PASSWORD'),
+      redisHost: this.getValue('REDIS_HOST')
     }
   }  
   
@@ -46,7 +47,8 @@ const configService = new ConfigService(process.env).ensureValues([
   'MONGODB_PASSWORD',
   'JWT_PASSWORD',
   'REDIS_USER',
-  'REDIS_PASSWORD'
+  'REDIS_PASSWORD',
+  'REDIS_HOST'
 ]);
 
 export {configService};

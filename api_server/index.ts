@@ -30,7 +30,7 @@ const helmet = require("helmet");
 const connectionOptions = {
   dbName: databaseName,
 };
-const { redisUser, redisPassword } = configService.getREDISConfig();
+const { redisUser, redisPassword, redisHost } = configService.getREDISConfig();
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 100,
@@ -52,6 +52,7 @@ const mongoConnection: MongooseConnection = new MongooseConnection(
 const redisClient: RedisClientType = createClient({
   username: redisUser,
   password: redisPassword,
+  url: redisHost
 });
 
 redisClient.connect();
